@@ -47,24 +47,34 @@ int main(int argc,char* argv[]){
         }
     }
 
-    ifstream inputFile;
-    std::vector<string> vectorStr;
+    string str = "in";
+
+    ifstream inputFile("in");
+    
     string inputStr;
 
-    inputFile.open(inFile,ifstream::in);
 
+    int n,k;
+    string s;
 
-    while(!inputFile.eof()){
-        getline(inputFile,inputStr);
-        vectorStr.push_back(inputStr);
-        cout<<inputStr.c_str()<<endl;
+    inputFile>>n>>k>>s;
+    cout<<n<<endl;
+    cout<<k<<endl;
+    cout<<s<<endl;
+    
+    vector<string> vecWord;
+    vector<double> vecValue;
+
+    for(int i=0;i<k;i++){
+    	string tmps;
+    	double tmpd;
+    	inputFile>>tmps>>tmpd;
+    	vecWord.push_back(tmps);
+    	vecValue.push_back(tmpd);
+    	//cout<<"word:"<<tmps<<" "<<tmpd<<endl;
     }
 
-    vector<string>::constIterator itor = vectorStr.begin();
-
-    for (itor; itor != vectorStr.end();itor++){
-        cout<<*itor<<endl;
-    }
+    
 
 
 	return 0;
