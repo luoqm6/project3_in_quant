@@ -13,14 +13,12 @@
 using namespace std;
 
 
-// structure MagicWord --MagicWord contains the magicword substring,
-// the value of the substring and the next array of the substring
-struct MagicWord{
 
+struct MagicWord{
 	string subStr;
 	int value;
 	int len;
-	vector<int> next;//the next array of the substring used for KMP
+	vector<int> next;
 
 	MagicWord(){
 		subStr = "";
@@ -98,44 +96,34 @@ void calNext(const char *str, int *next,int len){
 	}
 }
 
-// Summary: match the substring by KMP
-// Parameters:
-//      str:the father string to match. 
-//      subStr : the subStr to match.
-//		next: the next array of the subStr.
-// Return : the first index of the matched substring(-1 if unmatched).
-int KMP(string str,string subStr, vector<int> next){
+
+int KMP(string str,MagicWord mw){
 	int slen = str.size();
-	int subLen = subStr.size();
+	string ptr = mw.subStr;
+	int plen = mw.len;
 	int k = -1;
 	for(int i=0;i<slen;i++){
 
 		// unmatched and move to next[k]
-		while(k>-1 && subStr[k+1]!=str[i]){
-			k = next[k];
+		while(k>-1 && ptr[k+1]!=str[i]){
+			k = mw.next[k];
 		}
 		// matched a char and move
-		if(subStr [k + 1] == str[i]){
+		if(ptr [k + 1] == str[i]){
 			k = k + 1;
 		}
 		// matched all
-		if(k == subLen-1){
-			return i-subLen+1;
+		if(k == plen-1){
+			return i-plen+1;
 		}
 	}
 	return -1;
 }
 
-// Summary: match the substring, remove it and add the value
-// Parameters:
-//      s:the reference of the father string to match, may change when return. 
-//      mw : the class contain the subStr, next array of the subStr.
-//		totalValue: the reference of the current value.
-// Return : the first index of the matched substring(-1 if unmatched).
 int removeSubStr(string &s,MagicWord mw, int &totalValue){
 	//remove the substring
 	string tmps = s;
-	int start = KMP(tmps,mw.subStr,mw.next);
+	int start = KMP(tmps,mw);
 	//cout<<"KMP = "<<start<<endl;
 	if(start != -1){
 		s = s.substr(0,start)+s.substr(start+mw.len,s.size());
@@ -144,11 +132,6 @@ int removeSubStr(string &s,MagicWord mw, int &totalValue){
 	return start;
 }
 
-// Summary: find the best solution by dfs
-// Parameters:
-//      root:the root Node contains the initial string and value. 
-//      vecWord : the vector contains all the MagicWord.
-// Return : the Node with the max value.
 Node dfsFindMax(Node root,vector<MagicWord> vecWord){
 	//init the solution maxNode
     Node maxNode = root;
@@ -214,10 +197,6 @@ Node dfsFindMax(Node root,vector<MagicWord> vecWord){
     return maxNode;
 }
 
-// Summary: read the file
-// Parameters:
-//      inFile:the path string of the file. 
-// Return : none.
 int n,k;
 string s;
 vector<MagicWord> vecWord;
@@ -256,10 +235,6 @@ void readFileByStr(string inFile){
     }
 }
 
-// Summary: show the route and value of the Node
-// Parameters:
-//      maxNode:the best nodes. 
-// Return : none.
 void showAnswer(Node maxNode){
 	// for(int i = 0; i < maxNode.vecOut.size();i++){
 	// 	cout<<"out = "<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
