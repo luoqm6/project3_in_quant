@@ -1,90 +1,24 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#include <cstring>
-#include <vector>
-#include <fstream>
-#include <algorithm>
-#include <queue>
-#include <stack>
+#include "magicprocess.h"
 
-using namespace std;
+// Summary: initialize some private variable
+MagicProcess::MagicProcess(){
+	n = 0;
+	k = 0;
+	totalStr = "";
+}
 
-
-// structure MagicWord --MagicWord contains the magicword substring,
-// the value of the substring and the next array of the substring
-struct MagicWord{
-
-	string subStr;
-	int value;
-	int len;
-	vector<int> next;//the next array of the substring used for KMP
-
-	MagicWord(){
-		subStr = "";
-		value = 0;
-		len = 0;
-	}
-
-	MagicWord(string w,int v){
-		subStr = w;
-		value = v;
-		len = w.size();
-	}
-
-	bool operator < (const MagicWord& right) const {  
-	  return value < right.value;  
-	}//asscend
-
-	bool operator > (const MagicWord& right) const {  
-	  return value > right.value;  
-	}//desscend
-
-};
-
-struct Output{
-	string outWord;
-	int outPlace;
-	Output(){
-		outPlace = -1;
-		outWord = "none";
-	}
-	Output(string w,int p){
-		outWord = w;
-		outPlace = p;
-	}
-};
-
-struct Node{
-	string nodeStr;
-	vector<Output> vecOut;
-	int nodeValue;
-	Node(){
-		nodeStr = "";
-		nodeValue = 0;
-	}
-	Node(string s, vector<Output> v, int total = 0){
-		nodeStr = s;
-		vecOut = v;
-		nodeValue = total;
-	}
-	Node(string s, int total = 0){
-		nodeStr = s;
-		nodeValue = total;
-	}
-};
-
+// Summary: destructor of the class MagicProcess.
+MagicProcess::~MagicProcess(){
+}
 
 // Summary: calculate the next[]
 // Parameters:
-//      str:the string want to calculate next[].*    
+//      str:point to the string want to calculate next[].*    
 //      next : the int next array to calculate.
 //		len: the size of the string.
 // Return : none.
-void calNext(const char *str, int *next,int len){
-	// init next[0]
+void MagicProcess::calNext(const char *str, int *next, int len){
+	// initialize next[0]
 	next[0] = -1;
 	int k = -1;
 	for (int q=1;q<=len -1 ;q++){
@@ -104,7 +38,7 @@ void calNext(const char *str, int *next,int len){
 //      subStr : the subStr to match.
 //		next: the next array of the subStr.
 // Return : the first index of the matched substring(-1 if unmatched).
-int KMP(string str,string subStr, vector<int> next){
+int MagicProcess::KMP(string str,string subStr, vector<int> next){
 	int slen = str.size();
 	int subLen = subStr.size();
 	int k = -1;
@@ -128,17 +62,17 @@ int KMP(string str,string subStr, vector<int> next){
 
 // Summary: match the substring, remove it and add the value
 // Parameters:
-//      s:the reference of the father string to match, may change when return. 
+//      totalStr:the reference of the father string to match, may change when return. 
 //      mw : the class contain the subStr, next array of the subStr.
 //		totalValue: the reference of the current value.
 // Return : the first index of the matched substring(-1 if unmatched).
-int removeSubStr(string &s,MagicWord mw, int &totalValue){
+int MagicProcess::removeSubStr(string &totalStr,MagicWord mw, int &totalValue){
 	//remove the substring
-	string tmps = s;
+	string tmps = totalStr;
 	int start = KMP(tmps,mw.subStr,mw.next);
 	//cout<<"KMP = "<<start<<endl;
 	if(start != -1){
-		s = s.substr(0,start)+s.substr(start+mw.len,s.size());
+		totalStr = totalStr.substr(0,start)+totalStr.substr(start+mw.len,totalStr.size());
 		totalValue += mw.value;
 	}
 	return start;
@@ -149,17 +83,17 @@ int removeSubStr(string &s,MagicWord mw, int &totalValue){
 //      root:the root Node contains the initial string and value. 
 //      vecWord : the vector contains all the MagicWord.
 // Return : the Node with the max value.
-Node dfsFindMax(Node root,vector<MagicWord> vecWord){
-	//init the solution maxNode
+Node MagicProcess::dfsFindMax(Node root,vector<MagicWord> vecWord){
+	//initialize the solution maxNode
     Node maxNode = root;
 
-    //cout<<"s now = "<<root.str<<endl;
+    //cout<<"totalStr now = "<<root.str<<endl;
     //queue<Node> qNode;
 
     //stack to cotain the nodes when doing dfs
     stack<Node> stNode;
 
-    //init the stack
+    //initialize the stack
     stNode.push(root);
     while(!stNode.empty()){
 
@@ -172,8 +106,11 @@ Node dfsFindMax(Node root,vector<MagicWord> vecWord){
     	if(tmpN.nodeValue > maxNode.nodeValue){
     		maxNode = tmpN;
     	}
+    	
+    	
+    	if(tmpN.nodeStr.empty()) continue;
 
-    	//get all the child neighbor node of current node
+    	//get all the possible child neighbor node of current node
     	for(int i = 0;i < vecWord.size();i++){
 
 	    	//cout<<"substr["<<i<<"] = "<<vecWord[i].subStr<<" len = "<<vecWord[i].len<<endl;
@@ -184,13 +121,13 @@ Node dfsFindMax(Node root,vector<MagicWord> vecWord){
 	    	//temp variables
 	    	string nodeStr = tmpN.nodeStr;
 	    	int nodeValue = tmpN.nodeValue;
-	    	vector<Output> vecOut = tmpN.vecOut;
+	    	vector<OutWord> vecOut = tmpN.vecOut;
 
 	    	//the string of current node contains the substring
 	    	int outPlace = removeSubStr(nodeStr,vecWord[i],nodeValue);
 	    	if( outPlace != -1){
 	    		//find a new child neighbor node and put it into stack
-	    		Output output(vecWord[i].subStr,outPlace);
+	    		OutWord output(vecWord[i].subStr,outPlace);
 	    		vecOut.push_back(output);
 	    		Node nghbr(nodeStr,vecOut,nodeValue);
 	    		// cout<<"the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
@@ -218,10 +155,7 @@ Node dfsFindMax(Node root,vector<MagicWord> vecWord){
 // Parameters:
 //      inFile:the path string of the file. 
 // Return : none.
-int n,k;
-string s;
-vector<MagicWord> vecWord;
-void readFileByStr(string inFile){
+void MagicProcess::readFileByStr(string inFile){
 	if(inFile.empty()){
     	inFile = "in";
     }
@@ -229,13 +163,11 @@ void readFileByStr(string inFile){
     ifstream inputFile(inFile.c_str());
 
 
-    inputFile>>n>>k>>s;
+    inputFile>>n>>k>>totalStr;
     // cout<<n<<endl;
     // cout<<k<<endl;
-    // cout<<s<<endl;
+    // cout<<totalStr<<endl;
     
-    
-
     for(int i=0;i<k;i++){
     	string tmps;
     	double tmpd;
@@ -258,9 +190,9 @@ void readFileByStr(string inFile){
 
 // Summary: show the route and value of the Node
 // Parameters:
-//      maxNode:the best nodes. 
+//      maxNode:the best node. 
 // Return : none.
-void showAnswer(Node maxNode){
+void MagicProcess::showAnswer(Node maxNode){
 	// for(int i = 0; i < maxNode.vecOut.size();i++){
 	// 	cout<<"out = "<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
 	// }
@@ -271,66 +203,27 @@ void showAnswer(Node maxNode){
 	cout<<maxNode.nodeValue<<endl;
 }
 
-class Process{
-	public:
-		int n,k;
-		string s;
+// Summary: sort the word vector by the value of the magic word
+// Parameters:
+//     none. 
+// Return : none.
+void MagicProcess::sortVecWordDesc(){
+	sort(vecWord.begin(), vecWord.end(),less<MagicWord>());
+}
 
-		Process(){
+// Summary: get the vector contains MagicWords
+// Parameters:
+//     none. 
+// Return : the vector contains MagicWords.
+vector<MagicWord> MagicProcess::getVecWord(){
+	return vecWord;
+}
 
-		}
-};
-
-int main(int argc,char* argv[]){
-	string inFile;
-    string type;  
-    // string dbPath;
-    // string outFile;  
-    // string sep("\t");
-    // int col = -1; 
-
-    if(argc > 1){
-        type = string(argv[1]);  
-    }  
-    int ch;  
-    opterr = 0; 
-
-    //get the argv from command line
-    while ((ch = getopt(argc, argv, "d:i:o:s:c:")) != -1) {  
-        switch (ch) {
-        	case 'i': 
-				inFile = string(optarg); 
-				//cout<<"-i is :"<<inFile<<endl;
-				break;  
-    //         case 'd': 
-				// dbPath = string(optarg); 
-				// //cout<<"-d is :"<<dbPath<<endl;
-				// break;  
-            
-    //         case 'o':
-				// outFile = string(optarg);
-				// //cout<<"-o is :"<<outFile<<endl;
-				// break;  
-    //         case 's': 
-				// sep = string(optarg); 
-				// //cout<<"-s is :"<<sep<<endl;
-				// break;  
-    //         case 'c': 
-				// col = atoi(optarg); 
-				// //cout<<"-c is :"<<col<<endl;
-				// break;  
-        }
-    }
-
-    readFileByStr(inFile);
-
-    sort(vecWord.begin(), vecWord.end(),less<MagicWord>());
-
-    //init the root node
-    Node root(s,0);
-    Node maxNode = dfsFindMax(root,vecWord);
-    showAnswer(maxNode);
-    
-	return 0;
+// Summary: get the total string
+// Parameters:
+//     none. 
+// Return : the total string.
+string MagicProcess::getTotalStr(){
+	return totalStr;
 }
 
