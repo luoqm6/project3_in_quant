@@ -131,10 +131,11 @@ class MagicProcess{
 		//		next: the next array of the subStr.
 		// Return : the first index of the matched substring(-1 if unmatched).
 		int KMP(string str,string subStr, vector<int> next){
-			int slen = str.size();
+			int sLen = str.size();
 			int subLen = subStr.size();
 			int k = -1;
-			for(int i=0;i<slen;i++){
+			if(sLen < subLen) return -1;
+			for(int i=0;i<sLen;i++){
 		
 				// unmatched and move to next[k]
 				while(k>-1 && subStr[k+1]!=str[i]){
@@ -193,7 +194,7 @@ class MagicProcess{
 		    	Node tmpN;
 		    	tmpN = stNode.top();
 		    	stNode.pop();
-		
+	
 		    	//update the solution maxNode
 		    	if(tmpN.nodeValue > maxNode.nodeValue){
 		    		maxNode = tmpN;
@@ -214,6 +215,12 @@ class MagicProcess{
 			    	string nodeStr = tmpN.nodeStr;
 			    	int nodeValue = tmpN.nodeValue;
 			    	vector<OutWord> vecOut = tmpN.vecOut;
+			    	
+			    	if(nodeStr.size()<vecWord[i].subStr.size()){
+			    		continue;
+					}
+//					cout<<"+ the str now = "<<nodeStr<<" value = "<<nodeValue<<endl;
+//					cout<<"nodeStr size:"<<nodeStr.size()<<" subStr size:"<<vecWord[i].subStr.size()<<endl;
 		
 			    	//the string of current node contains the substring
 			    	int outPlace = removeSubStr(nodeStr,vecWord[i],nodeValue);
@@ -222,10 +229,10 @@ class MagicProcess{
 			    		OutWord output(vecWord[i].subStr,outPlace);
 			    		vecOut.push_back(output);
 			    		Node nghbr(nodeStr,vecOut,nodeValue);
-			    		// cout<<"the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
-			    		// for(int i = 0; i < nghbr.vecOut.size();i++){
-					    // 	cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
-					    // }
+//						cout<<"- the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
+//						for(int i = 0; i < nghbr.vecOut.size();i++){
+//							cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
+//						}
 			    		stNode.push(nghbr);
 			    	}
 			    	
