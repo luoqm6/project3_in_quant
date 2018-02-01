@@ -89,6 +89,7 @@ class MagicProcess{
 		int k;	// the total number of magicwords
 		string totalStr;	//the total string to find the magicwords
 		vector<MagicWord> vecWord;	// the vector cotains all the magicwords
+		vector<Node> vecNodes;
 	
 	public:
 		
@@ -179,6 +180,8 @@ class MagicProcess{
 		Node dfsFindMax(Node root,vector<MagicWord> vecWord){
 			//initialize the solution maxNode
 		    Node maxNode = root;
+		    
+		    vecNodes.clear();
 		
 		    //cout<<"totalStr now = "<<root.str<<endl;
 		    //queue<Node> qNode;
@@ -200,6 +203,34 @@ class MagicProcess{
 		    		maxNode = tmpN;
 		    	}
 		    	
+		    	//temp variables
+		    	string tmpStr = tmpN.nodeStr;
+		    	int tmpValue = tmpN.nodeValue;
+		    	
+		    	//cut?
+				bool cut =0;
+				for (int i = 0;i<vecNodes.size();i++){
+		    		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
+		    			cut = 1;
+		    			break;
+					}
+				}
+				if(cut == 1) continue;
+		    	
+//		    	bool cut =0;
+//		    	for (int i = 0;i<vecNodes.size();i++){
+//		    		if(tmpN.nodeStr == vecNodes[i].nodeStr){
+//		    			cut = 1;
+//		    			vector<OutWord> tmpOut = tmpN.vecOut;
+//		    			for(int j=0;j<vecNodes[i].vecOut.size();j++){
+//		    				tmpOut.push_back(vecNodes[i].vecOut[j]);
+//						}
+//		    			Node child("",tmpOut,tmpN.nodeValue+vecNodes[i].nodeValue);
+//		    			stNode.push(child);
+//		    			break;
+//					}
+//				}
+//				if(cut == 1) continue;
 		    	
 		    	if(tmpN.nodeStr.empty()) continue;
 		
@@ -229,10 +260,16 @@ class MagicProcess{
 			    		OutWord output(vecWord[i].subStr,outPlace);
 			    		vecOut.push_back(output);
 			    		Node nghbr(nodeStr,vecOut,nodeValue);
+			    		
 //						cout<<"- the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
 //						for(int i = 0; i < nghbr.vecOut.size();i++){
 //							cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
 //						}
+						
+						///////////////////////
+						if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
+						///////////////////////
+						
 			    		stNode.push(nghbr);
 			    	}
 			    	
@@ -244,6 +281,105 @@ class MagicProcess{
 			    // 	stNode.pop();
 			    // 	cout<<"nodeStr now = "<<tmpN.nodeStr<<" nodeValue now = "<<tmpN.nodeValue<<endl;
 			    // }
+		    }
+		
+		    //as it means
+		    return maxNode;
+		}
+		
+		// Summary: find the best solution by bfs
+		// Parameters:
+		//      root:the root Node contains the initial string and value. 
+		//      vecWord : the vector contains all the MagicWord.
+		// Return : the Node with the max value.
+		Node bfsFindMax(Node root,vector<MagicWord> vecWord){
+			//initialize the solution maxNode
+		    Node maxNode = root;
+		
+		    vecNodes.clear();
+		
+		    //stack to cotain the nodes when doing dfs
+		    queue<Node> qNode;
+		
+		    //initialize the stack
+		    qNode.push(root);
+		    while(!qNode.empty()){
+		
+		    	//current node
+		    	Node tmpN;
+		    	tmpN = qNode.front();
+		    	qNode.pop();
+	
+		    	//update the solution maxNode
+		    	if(tmpN.nodeValue > maxNode.nodeValue){
+		    		maxNode = tmpN;
+		    	}
+		    	
+		    	
+		    	
+		    	if(tmpN.nodeStr.empty()) continue;
+		    	
+		    	//cut?
+				bool cut =0;
+				for (int i = 0;i<vecNodes.size();i++){
+		    		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
+		    			cut = 1;
+		    			break;
+					}
+				}
+				if(cut == 1) continue;
+		
+		    	//get all the possible child neighbor node of current node
+		    	for(int i = 0;i < vecWord.size();i++){
+		
+			    	//temp variables
+			    	string nodeStr = tmpN.nodeStr;
+			    	int nodeValue = tmpN.nodeValue;
+			    	vector<OutWord> vecOut = tmpN.vecOut;
+			    	
+			    	if(nodeStr.size()<vecWord[i].subStr.size()){
+			    		continue;
+					}
+		
+			    	//the string of current node contains the substring
+			    	int outPlace = removeSubStr(nodeStr,vecWord[i],nodeValue);
+			    	if( outPlace != -1){
+			    		//find a new child neighbor node and put it into stack
+			    		OutWord output(vecWord[i].subStr,outPlace);
+			    		vecOut.push_back(output);
+			    		Node nghbr(nodeStr,vecOut,nodeValue);
+//						cout<<"- the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
+//						for(int i = 0; i < nghbr.vecOut.size();i++){
+//							cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
+//						}
+						
+						//cut?
+//						bool cut =0;
+//						for (int i = 0;i<vecNodes.size();i++){
+//				    		if(nghbr.nodeStr == vecNodes[i].nodeStr&&nghbr.nodeValue < vecNodes[i].nodeValue){
+////				    			cout<<"vecNodesstr = "<<vecNodes[i].nodeStr<<" vecNodesvalue = "<<vecNodes[i].nodeValue<<endl;
+////				    			cout<<"nghbrstr = "<<nghbr.nodeStr<<" nghbrvalue = "<<nghbr.nodeValue<<endl;
+////				    			vector<OutWord> tmpOut = nghbr.vecOut;
+////				    			for(int j = 0;j<vecNodes[i].vecOut.size();j++){
+////				    				tmpOut.push_back(vecNodes[i].vecOut[j]);
+////								}
+////				    			Node child("",tmpOut,nghbr.nodeValue + vecNodes[i].nodeValue);
+////				    			qNode.push(child);
+//				    			
+//				    			cut = 1;
+//				    			break;
+//							}
+//						}
+//						if(cut == 1) continue;
+						
+						///////////////////////
+						//Node node(nghbr.nodeStr,nghbr.vecOut,nghbr.nodeValue);
+						if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
+						///////////////////////
+			    		qNode.push(nghbr);
+			    	}
+			    	
+			    }
 		    }
 		
 		    //as it means
@@ -296,11 +432,15 @@ class MagicProcess{
 			// 	cout<<"out = "<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
 			// }
 			// cout<<"current string is: "<<maxNode.nodeStr<<" the value is: "<<maxNode.nodeValue<<endl;
+			
 			for(int i = 0; i < maxNode.vecOut.size();i++){
 				cout<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
 			}
+			
 			cout<<maxNode.nodeValue<<endl;
 		}
+		
+
 		
 		// Summary: output to the file
 		// Parameters:
@@ -329,6 +469,14 @@ class MagicProcess{
 		// Return : none.
 		void sortVecWordDesc(){
 			sort(vecWord.begin(), vecWord.end(),less<MagicWord>());
+		}
+		
+		// Summary: sort the word vector by the value of the magic word
+		// Parameters:
+		//     none. 
+		// Return : none.
+		void sortVecWordAsc(){
+			sort(vecWord.begin(), vecWord.end(),greater<MagicWord>());
 		}
 		
 		// Summary: get the vector contains MagicWords

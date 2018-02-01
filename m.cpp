@@ -13,7 +13,6 @@
 using namespace std;
 
 
-
 int main(int argc,char* argv[]){
 	string inFile;
     string type;  
@@ -68,6 +67,12 @@ int main(int argc,char* argv[]){
     
     //find the solution by dfs
     Node maxNode = process.dfsFindMax(root,process.getVecWord());
+    
+//    //sort the vecWord(MagicWords)
+//    process.sortVecWordAsc();
+//    
+//    //find the solution by bfs
+//    Node maxNode = process.bfsFindMax(root,process.getVecWord());
     
     //print the route of the best node
     process.showAnswer(maxNode);
