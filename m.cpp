@@ -9,7 +9,7 @@
 #include <queue>
 #include <stack>
 #include <cstdio>
-#include "magicprocess.cpp"
+#include "magic.cpp"
 using namespace std;
 
 
@@ -21,38 +21,38 @@ int main(int argc,char* argv[]){
     // string sep("\t");
     // int col = -1; 
 
-    if(argc > 1){
-        type = string(argv[1]);  
-    }  
-    int ch;  
-    opterr = 0; 
+    inFile = argv[1];
 
-    //get the argv from command line
-    while ((ch = getopt(argc, argv, "d:i:o:s:c:")) != -1) {  
-        switch (ch) {
-        	case 'i': 
-				inFile = string(optarg); 
-				//cout<<"-i is :"<<inFile<<endl;
-				break;  
-    //         case 'd': 
-				// dbPath = string(optarg); 
-				// //cout<<"-d is :"<<dbPath<<endl;
+    outFile = argv[2];
+
+    //cout<<"inFlie = |"<<inFile<<"| outFile = |"<<outFile<<"|"<<endl;
+
+    // //get the argv from command line
+    // while ((ch = getopt(argc, argv, "d:i:o:s:c:")) != -1) {  
+    //     switch (ch) {
+    //     	case 'i': 
+				// inFile = string(optarg); 
+				// //cout<<"-i is :"<<inFile<<endl;
 				// break;  
+    // //         case 'd': 
+				// // dbPath = string(optarg); 
+				// // //cout<<"-d is :"<<dbPath<<endl;
+				// // break;  
             
-             case 'o':
-				 outFile = string(optarg);
-				 //cout<<"-o is :"<<outFile<<endl;
-				 break;  
-    //         case 's': 
-				// sep = string(optarg); 
-				// //cout<<"-s is :"<<sep<<endl;
-				// break;  
-    //         case 'c': 
-				// col = atoi(optarg); 
-				// //cout<<"-c is :"<<col<<endl;
-				// break;  
-        }
-    }
+    //          case 'o':
+				//  outFile = string(optarg);
+				//  //cout<<"-o is :"<<outFile<<endl;
+				//  break;  
+    // //         case 's': 
+				// // sep = string(optarg); 
+				// // //cout<<"-s is :"<<sep<<endl;
+				// // break;  
+    // //         case 'c': 
+				// // col = atoi(optarg); 
+				// // //cout<<"-c is :"<<col<<endl;
+				// // break;  
+    //     }
+    // }
     
     MagicProcess process;
     
@@ -62,20 +62,20 @@ int main(int argc,char* argv[]){
     //initialize the root node
     Node root(process.getTotalStr(),0);
     
-    //sort the vecWord(MagicWords)
-    process.sortVecWordDesc();
+    // //sort the vecWord(MagicWords)
+    // process.sortVecWordDesc();
     
-    //find the solution by dfs
-    Node maxNode = process.dfsFindMax(root,process.getVecWord());
+    // //find the solution by dfs
+    // Node maxNode = process.dfsFindMax(root,process.getVecWord());
     
-//    //sort the vecWord(MagicWords)
-//    process.sortVecWordAsc();
-//    
-//    //find the solution by bfs
-//    Node maxNode = process.bfsFindMax(root,process.getVecWord());
+   //sort the vecWord(MagicWords)
+   process.sortVecWordAsc();
+   
+   //find the solution by bfs
+   Node maxNode = process.bfsFindMax(root,process.getVecWord());
     
     //print the route of the best node
-    process.showAnswer(maxNode);
+    //process.showAnswer(maxNode);
     
     //output to file
     process.outputFile(maxNode,outFile);

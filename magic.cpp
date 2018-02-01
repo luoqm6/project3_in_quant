@@ -65,18 +65,24 @@ struct Node{
 	string nodeStr;
 	vector<OutWord> vecOut;
 	int nodeValue;
+	bool nodeVis;
+	
+	
 	Node(){
 		nodeStr = "";
 		nodeValue = 0;
+		nodeVis = 0;
 	}
 	Node(string s, vector<OutWord> v, int total = 0){
 		nodeStr = s;
 		vecOut = v;
 		nodeValue = total;
+		nodeVis = 0;
 	}
 	Node(string s, int total = 0){
 		nodeStr = s;
 		nodeValue = total;
+		nodeVis = 0;
 	}
 };
 
@@ -197,50 +203,47 @@ class MagicProcess{
 		    	Node tmpN;
 		    	tmpN = stNode.top();
 		    	stNode.pop();
+		    	//
+		    	if(tmpN.nodeVis==0){
+		    		tmpN.nodeVis = 1;
+		    		stNode.push(tmpN);
+				}
+				else{
+					
+				}
+	
 	
 		    	//update the solution maxNode
 		    	if(tmpN.nodeValue > maxNode.nodeValue){
 		    		maxNode = tmpN;
 		    	}
 		    	
+		    	
+		    	
 		    	//temp variables
 		    	string tmpStr = tmpN.nodeStr;
 		    	int tmpValue = tmpN.nodeValue;
 		    	
 		    	//cut?
-				bool cut =0;
-				for (int i = 0;i<vecNodes.size();i++){
-		    		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
-		    			cut = 1;
-		    			break;
-					}
-				}
-				if(cut == 1) continue;
+				// bool cut =0;
+				// for (int i = 0;i<vecNodes.size();i++){
+		  //   		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
+		  //   			//cout<<"str ="<<tmpN.nodeStr<<" value = "<<tmpN.nodeValue<<" < "<<vecNodes[i].nodeValue<<endl;
+		  //   			cut = 1;
+		  //   			break;
+				// 	}
+				// }
+				// if(cut == 1){
+				// 	//cout<<"cut some\n";
+				// 	continue;
+				// } 
 		    	
-//		    	bool cut =0;
-//		    	for (int i = 0;i<vecNodes.size();i++){
-//		    		if(tmpN.nodeStr == vecNodes[i].nodeStr){
-//		    			cut = 1;
-//		    			vector<OutWord> tmpOut = tmpN.vecOut;
-//		    			for(int j=0;j<vecNodes[i].vecOut.size();j++){
-//		    				tmpOut.push_back(vecNodes[i].vecOut[j]);
-//						}
-//		    			Node child("",tmpOut,tmpN.nodeValue+vecNodes[i].nodeValue);
-//		    			stNode.push(child);
-//		    			break;
-//					}
-//				}
-//				if(cut == 1) continue;
 		    	
 		    	if(tmpN.nodeStr.empty()) continue;
 		
 		    	//get all the possible child neighbor node of current node
 		    	for(int i = 0;i < vecWord.size();i++){
 		
-			    	//cout<<"substr["<<i<<"] = "<<vecWord[i].subStr<<" len = "<<vecWord[i].len<<endl;
-			    	// for (int j=0;j<tmpWord[i].next.size();j++){
-			    	// 	cout<<"next["<<j<<"] = "<<tmpWord[i].next[j]<<endl;
-			    	// }
 		
 			    	//temp variables
 			    	string nodeStr = tmpN.nodeStr;
@@ -250,8 +253,7 @@ class MagicProcess{
 			    	if(nodeStr.size()<vecWord[i].subStr.size()){
 			    		continue;
 					}
-//					cout<<"+ the str now = "<<nodeStr<<" value = "<<nodeValue<<endl;
-//					cout<<"nodeStr size:"<<nodeStr.size()<<" subStr size:"<<vecWord[i].subStr.size()<<endl;
+
 		
 			    	//the string of current node contains the substring
 			    	int outPlace = removeSubStr(nodeStr,vecWord[i],nodeValue);
@@ -261,13 +263,9 @@ class MagicProcess{
 			    		vecOut.push_back(output);
 			    		Node nghbr(nodeStr,vecOut,nodeValue);
 			    		
-//						cout<<"- the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
-//						for(int i = 0; i < nghbr.vecOut.size();i++){
-//							cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
-//						}
 						
 						///////////////////////
-						if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
+						//if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
 						///////////////////////
 						
 			    		stNode.push(nghbr);
@@ -275,17 +273,13 @@ class MagicProcess{
 			    	
 			    }
 		
-			    // while(!stNode.empty()){
-			    // 	Node tmpN;
-			    // 	tmpN = stNode.top();
-			    // 	stNode.pop();
-			    // 	cout<<"nodeStr now = "<<tmpN.nodeStr<<" nodeValue now = "<<tmpN.nodeValue<<endl;
-			    // }
+
 		    }
 		
 		    //as it means
 		    return maxNode;
 		}
+		
 		
 		// Summary: find the best solution by bfs
 		// Parameters:
@@ -316,18 +310,21 @@ class MagicProcess{
 		    	}
 		    	
 		    	
-		    	
 		    	if(tmpN.nodeStr.empty()) continue;
 		    	
-		    	//cut?
-				bool cut =0;
-				for (int i = 0;i<vecNodes.size();i++){
-		    		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
-		    			cut = 1;
-		    			break;
-					}
-				}
-				if(cut == 1) continue;
+		  //   	//cut?
+				// bool cut =0;
+				// for (int i = 0;i<vecNodes.size();i++){
+		  //   		if(tmpN.nodeStr == vecNodes[i].nodeStr&&tmpN.nodeValue < vecNodes[i].nodeValue){
+		  //   			//cout<<"str ="<<tmpN.nodeStr<<" value = "<<tmpN.nodeValue<<endl;
+		  //   			cut = 1;
+		  //   			break;
+				// 	}
+				// }
+				// if(cut == 1) {
+				// 	//cout<<"cut some\n";
+				// 	continue;
+				// }
 		
 		    	//get all the possible child neighbor node of current node
 		    	for(int i = 0;i < vecWord.size();i++){
@@ -348,33 +345,11 @@ class MagicProcess{
 			    		OutWord output(vecWord[i].subStr,outPlace);
 			    		vecOut.push_back(output);
 			    		Node nghbr(nodeStr,vecOut,nodeValue);
-//						cout<<"- the str now = "<<nghbr.nodeStr<<" value = "<<nghbr.nodeValue<<endl;
-//						for(int i = 0; i < nghbr.vecOut.size();i++){
-//							cout<<"out = "<<nghbr.vecOut[i].outWord<<" "<<nghbr.vecOut[i].outPlace<<endl;
-//						}
-						
-						//cut?
-//						bool cut =0;
-//						for (int i = 0;i<vecNodes.size();i++){
-//				    		if(nghbr.nodeStr == vecNodes[i].nodeStr&&nghbr.nodeValue < vecNodes[i].nodeValue){
-////				    			cout<<"vecNodesstr = "<<vecNodes[i].nodeStr<<" vecNodesvalue = "<<vecNodes[i].nodeValue<<endl;
-////				    			cout<<"nghbrstr = "<<nghbr.nodeStr<<" nghbrvalue = "<<nghbr.nodeValue<<endl;
-////				    			vector<OutWord> tmpOut = nghbr.vecOut;
-////				    			for(int j = 0;j<vecNodes[i].vecOut.size();j++){
-////				    				tmpOut.push_back(vecNodes[i].vecOut[j]);
-////								}
-////				    			Node child("",tmpOut,nghbr.nodeValue + vecNodes[i].nodeValue);
-////				    			qNode.push(child);
-//				    			
-//				    			cut = 1;
-//				    			break;
-//							}
-//						}
-//						if(cut == 1) continue;
+
 						
 						///////////////////////
 						//Node node(nghbr.nodeStr,nghbr.vecOut,nghbr.nodeValue);
-						if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
+						//if(!nghbr.nodeStr.empty())vecNodes.push_back(nghbr);
 						///////////////////////
 			    		qNode.push(nghbr);
 			    	}
@@ -428,10 +403,6 @@ class MagicProcess{
 		//      maxNode:the best node. 
 		// Return : none.
 		void showAnswer(Node maxNode){
-			// for(int i = 0; i < maxNode.vecOut.size();i++){
-			// 	cout<<"out = "<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
-			// }
-			// cout<<"current string is: "<<maxNode.nodeStr<<" the value is: "<<maxNode.nodeValue<<endl;
 			
 			for(int i = 0; i < maxNode.vecOut.size();i++){
 				cout<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
@@ -448,14 +419,9 @@ class MagicProcess{
 		//		outFile:the output path
 		// Return : none.
 		void outputFile(Node maxNode,string outFile){
-			// for(int i = 0; i < maxNode.vecOut.size();i++){
-			// 	cout<<"out = "<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
-			// }
-			// cout<<"current string is: "<<maxNode.nodeStr<<" the value is: "<<maxNode.nodeValue<<endl;
 			if(outFile.empty()){
 		    	outFile = "out";
 		    }
-		    //cout<<"outFile = "<<outFile<<"++"<<endl;
 			ofstream outputFile(outFile.c_str());
 			for(int i = 0; i < maxNode.vecOut.size();i++){
 				outputFile<<maxNode.vecOut[i].outPlace<<" "<<maxNode.vecOut[i].outWord<<endl;
