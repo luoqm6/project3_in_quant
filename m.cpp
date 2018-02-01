@@ -9,7 +9,7 @@
 #include <queue>
 #include <stack>
 #include <cstdio>
-#include "magic.cpp"
+#include "magic2_1_n.cpp"
 using namespace std;
 
 
@@ -21,9 +21,9 @@ int main(int argc,char* argv[]){
     // string sep("\t");
     // int col = -1; 
 
-    inFile = argv[1];
+    //inFile = argv[1];
 
-    outFile = argv[2];
+    //outFile = argv[2];
 
     //cout<<"inFlie = |"<<inFile<<"| outFile = |"<<outFile<<"|"<<endl;
 
@@ -60,22 +60,25 @@ int main(int argc,char* argv[]){
     process.readFileByStr(inFile);
 
     //initialize the root node
-    Node root(process.getTotalStr(),0);
+    Node root(process.getTotalStr(),0,0,0);
     
     // //sort the vecWord(MagicWords)
-    // process.sortVecWordDesc();
+    process.sortVecWordDesc();
     
-    // //find the solution by dfs
-    // Node maxNode = process.dfsFindMax(root,process.getVecWord());
+    //find the solution by dfs
+	Node maxNode = process.dfsFindMax(root,process.getVecWord());
     
-   //sort the vecWord(MagicWords)
-   process.sortVecWordAsc();
+	//sort the vecWord(MagicWords)
+   	//process.sortVecWordAsc();
    
-   //find the solution by bfs
-   Node maxNode = process.bfsFindMax(root,process.getVecWord());
+   	//find the solution by bfs
+	//Node maxNode = process.bfsFindMax(root,process.getVecWord());
+   
+   	// //find the solution by dfs
+	//Node maxNode = process.dfsFindMax2(root,process.getVecWord());
     
     //print the route of the best node
-    //process.showAnswer(maxNode);
+    process.showAnswer(maxNode);
     
     //output to file
     process.outputFile(maxNode,outFile);
